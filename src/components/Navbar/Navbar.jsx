@@ -4,25 +4,28 @@ import { ShoppingCart } from '@material-ui/icons';
 import { classes } from 'istanbul-lib-coverage';
 import logo from '../../assets/logo.png';
 import useStyles from './styles';
+import { Link, useLocation } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({totalItems}) => {
     const classes = useStyles();
+    const location =  useLocation();
     return (
         <>
         <AppBar position="fixed" className={classes.appBar} color="inherit">
             <Toolbar>
-                <Typography>
+                <Typography component={Link} to="/">
                     <img src={logo} alt="TheArtCorner" height="25px" className={classes.image}/>
                     The Art Corner
                 </Typography>
                 <div className={classes.grow} />
+                {location.pathname === '/'  && (
                 <div className={classes.button}>
-                    <IconButton aria-label="Show cart items" color="inherit">
-                        <Badge badgeContent={2} color="secondary">
+                    <IconButton element={Link} to="/cart" aria-label="Show cart items" color="inherit">
+                        <Badge badgeContent={totalItems} color="secondary">
                             <ShoppingCart />
                         </Badge>
                     </IconButton>
-                </div>
+                </div> )} 
             </Toolbar>
         </AppBar>
         </>
