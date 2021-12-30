@@ -3,15 +3,18 @@ import {Paper, Stepper, Step, StepLabel, Typography, CircularProgress, Divider, 
 import useStyles from './styles';
 import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
+import Review from '../Review';
 import { commerce } from '../../../lib/commerce';
+import { Link } from 'react-router-dom';
 
 const steps = ['Shipping Address', 'Payment Details'];
 
-const Checkout = ( { cart }) => {
+const Checkout = ( { cart, order, onCaptureCheckout, error }) => {
 
     const [activeStep, setActiveStep] = useState(0);
     const classes = useStyles();
     const [checkoutToken, setCheckoutToken] = useState(null);
+    const [shippingData, setShippingData] = useState({});
 
     useEffect(() => {
         const generateToken = async () => {
@@ -24,17 +27,34 @@ const Checkout = ( { cart }) => {
                 
             }
         }
+
         generateToken();
     }, [cart]);
 
+    const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    const backStep = () => setActiveStep((prevActiveStep) => prevActiveStep - 1);
+
+    const next = (data) => {
+        setShippingData(data);
+        nextStep();
+    }
+
     const Confirmation =() => (
-        <div> Confirmation</div>
+        <>
+        <div>
+            <Typography variant='h5'> Thank you for your purchase, firstName lastName</Typography>
+            <Divider className={classes.divider}/>
+            <Typography variant="subititle2">Order ref: ref</Typography>
+
+        </div>
+        <br/>
+        <Button component={Link} to="/" variant="outlined" type="button">Go to homepage</Button>
+        </>
     );
     
     const Form = () => activeStep === 0
-        ?<AddressForm checkoutToken={checkoutToken} />
-        : <PaymentForm />
-
+        ?<AddressForm checkoutToken={checkoutToken} next={next} />
+        : <PaymentForm  shippingData={shippingData} checkoutToken = {checkoutToken} backStep={backStep} nextStep={nextStep} onCaptureCheckout={onCaptureCheckout}/>
 
     return (
         <>
