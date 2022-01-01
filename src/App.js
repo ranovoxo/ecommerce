@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react'
 import {Products, Navbar, Cart, Checkout} from './components';
 import { commerce } from './lib/commerce';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { CssBaseline } from '@material-ui/core';
 
 const App = () => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState({});
     const [order, setOrder] = useState({});
     const [errorMsg, setErrorMsg] = useState('');
+    const [state, setState] = useState({});
 
     const fetchProducts = async () => {
        const { data } = await commerce.products.list(); // api call to fetch products
@@ -40,9 +42,9 @@ const App = () => {
         setCart(cart);
     }
     const refreshCart = async () => {
-        const {newCart} = await commerce.cart.refresh();
-
+        const cart = await commerce.cart.refresh();
         setCart(cart);
+
     }
     const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
         try {
@@ -62,6 +64,7 @@ const App = () => {
     return (
         <Router>
             <div>
+                <CssBaseline/>
                 <Navbar totalItems={cart.total_items}/>
                 <Routes>
                     <Route exact path="/" element={<Products products={products} onAddToCart={handleAddToCart}/>}></Route>
